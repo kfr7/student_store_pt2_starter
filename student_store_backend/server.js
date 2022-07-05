@@ -3,10 +3,19 @@ const cors = require("cors")
 const morgan = require("morgan")
 const { PORT } = require("./config")
 const { NotFoundError } = require("./utils/errors")
+const security = require("./middleware/security")
 const authRoutes = require("./routes/auth")
+const orderRoute = require("./routes/orders")
+const storeRoute = require("./routes/store")
 
 const app = express()
 
+// needed this to avoid errors in past projects.
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requeseted-With, Content-Type, Accept");
+  next()
+})
 // enable cross-origin resource sharing for all origins for all requests
 // NOTE: in production, we'll want to restrict this to only the origin
 // hosting our frontend.
@@ -16,7 +25,12 @@ app.use(express.json())
 // log requests info
 app.use(morgan("tiny"))
 
+app.use(security.extractUserFromJwt)
+
 app.use("/auth", authRoutes)
+app.use("/order", orderRoute)
+app.use("/store", storeRoute)
+
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
