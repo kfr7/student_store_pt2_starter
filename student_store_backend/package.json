@@ -1,9 +1,10 @@
 {
   "name": "pern-stack-auth-starter-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "This repo should server as a starting point for a new PERN stack project. It offers a simple user registration and login system without any long-term authorization mechanism baked in.",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,9 +16,9 @@
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
-    "express": "^5.0.0-alpha.8",
+    "express": "^5.0.0-beta.1",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.7",
-    "pg": "^8.6.0"
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3"
   }
 }
