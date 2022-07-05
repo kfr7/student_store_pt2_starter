@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import axios from "axios"
+// import axios from "axios"
+import apiClient from "../../services/apiClient"
 import "./Signup.css"
 
 export default function Signup({ user, setUser }) {
@@ -12,7 +13,7 @@ export default function Signup({ user, setUser }) {
     email: "",
     password: "",
     passwordConfirm: "",
-  })
+    username: ""  })
 
   useEffect(() => {
     // if user is already logged in,
@@ -54,24 +55,36 @@ export default function Signup({ user, setUser }) {
       setErrors((e) => ({ ...e, passwordConfirm: null }))
     }
 
-    try {
-      const res = await axios.post("http://localhost:3001/auth/register", {
-        name: form.name,
-        email: form.email,
-        password: form.password,
-      })
-      if (res?.data?.user) {
-        setUser(res.data.user)
-      } else {
-        setErrors((e) => ({ ...e, form: "Something went wrong with registration" }))
-      }
-    } catch (err) {
-      console.log(err)
-      const message = err?.response?.data?.error?.message
-      setErrors((e) => ({ ...e, form: message ?? String(err) }))
-    } finally {
-      setIsProcessing(false)
+    const { data, error } = await apiClient.signup( { 
+    name: form.name, 
+    email: form.email, 
+    password: form.password,
+    username: form.username   })
+    if (error) setErrors((e) => ({...e, form: error}))
+    if (data?.user) {
+      setUser(data.user)
+      apiClient.setToken(data.token)
     }
+
+    setIsProcessing(false)
+  //   try {
+  //     const res = await axios.post("http://localhost:3001/auth/register", {
+  //       name: form.name,
+  //       email: form.email,
+  //       password: form.password,
+  //     })
+  //     if (res?.data?.user) {
+  //       setUser(res.data.user)
+  //     } else {
+  //       setErrors((e) => ({ ...e, form: "Something went wrong with registration" }))
+  //     }
+  //   } catch (err) {
+  //     console.log(err)
+  //     const message = err?.response?.data?.error?.message
+  //     setErrors((e) => ({ ...e, form: message ?? String(err) }))
+  //   } finally {
+  //     setIsProcessing(false)
+  //   }
   }
 
   return (
@@ -129,6 +142,18 @@ export default function Signup({ user, setUser }) {
               onChange={handleOnInputChange}
             />
             {errors.passwordConfirm && <span className="error">{errors.passwordConfirm}</span>}
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="username">Enter Username</label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter username"
+              value={form.username}
+              onChange={handleOnInputChange}
+            />
+            {/* {errors.passwordConfirm && <span className="error">{errors.passwordConfirm}</span>} */}
           </div>
 
           <button className="btn" disabled={isProcessing} onClick={handleOnSubmit}>
